@@ -1,0 +1,142 @@
+#include <iostream>
+#include <string>
+#include <dirent.h>
+#include <direct.h>
+#include <windows.h>
+
+using namespace std;
+
+// Function to list files in the current directory based on a pattern
+void list_files(const string& pattern = "*") {
+DIR* dir = opendir(".");
+if (dir == nullptr) {
+cerr << "Failed to open directory." << endl;
+return;
+}
+
+struct dirent* entry;
+while ((entry = readdir(dir)) != nullptr) {
+// Skip hidden files (dotfiles)
+if (entry->d_name[0] != '.') {
+cout << entry->d_name << endl;
+}
+}
+
+closedir(dir);
+}
+
+// Function to create a directory
+void create_directory(const string& name) {
+if (_mkdir(name.c_str()) == 0) {
+cout << "Directory '" << name << "' created successfully." << endl;
+} else {
+cerr << "Failed to create directory '" << name << "'. It might already exist or there may be a permission issue." << endl;
+}
+}
+
+// Function to change the current directory
+void change_directory(const string& path) {
+if (_chdir(path.c_str()) == 0) {
+cout << "Changed directory to: " << path << endl;
+} else {
+cerr << "Failed to change directory to: " << path << ". It might not exist." << endl;
+}
+}
+
+int main() {
+int choice;
+bool exitProgram = false;
+
+while (!exitProgram) {
+cout << "\nMain Menu:" << endl;
+cout << "1. List files" << endl;
+cout << "2. Create directory" << endl;
+cout << "3. Change directory" << endl;
+cout << "4. Exit" << endl;
+cout << "Enter your choice: ";
+cin >> choice;
+
+switch (choice) {
+case 1: {
+cout << "List files options:" << endl;
+cout << "1. List all files" << endl;
+cout << "2. List files by extension" << endl;
+cout << "3. List files by pattern" << endl;
+
+int listChoice;
+cout << "Enter your choice: ";
+cin >> listChoice;
+
+switch (listChoice) {
+case 1:
+list_files();
+break;
+case 2: {
+string extension;
+cout << "Enter the file extension (e.g., txt): ";
+cin >> extension;
+list_files("*." + extension);
+break;
+}
+case 3: {
+string pattern;
+cout << "Enter the pattern (e.g., *.txt): ";
+cin >> pattern;
+list_files(pattern);
+break;
+}
+default:
+cout << "Invalid choice." << endl;
+break;
+}
+break;
+}
+case 2: {
+string directoryName;
+cout << "Enter the directory name: ";
+cin >> directoryName;
+create_directory(directoryName);
+break;
+}
+case 3: {
+cout << "Change directory options:" << endl;
+cout << "1. Move one step back" << endl;
+cout << "2. Move to root directory" << endl;
+cout << "3. Move to a specific directory" << endl;
+
+int changeChoice;
+cout << "Enter your choice: ";
+cin >> changeChoice;
+
+switch (changeChoice) {
+case 1:
+change_directory("..");
+break;
+case 2:
+change_directory("C:\\"); // Move to the root of C drive
+break;
+case 3: {
+string path;
+cout << "Enter the directory path: ";
+cin >> path;
+change_directory(path);
+break;
+}
+default:
+cout << "Invalid choice." << endl;
+break;
+}
+break;
+}
+case 4:
+cout << "Exiting..." << endl;
+exitProgram = true;
+break;
+default:
+cout << "Invalid choice. Please try again." << endl;
+break;
+}
+}
+
+return 0;
+}
